@@ -125,7 +125,14 @@ int main()
     subject.addObserver(p3, 1);
     subject.addObserver(p3, 3);
 
-    subject.dispatch(3);
-
+    int msgid = 0;
+    for(;;)
+    {
+        cout << "输入消息id";
+        cin >> msgid;
+        if (msgid == -1)
+            break;
+        subject.dispatch(msgid);
+    }
     return 0;
 }

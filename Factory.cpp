@@ -16,8 +16,9 @@ using namespace std;
 
 #if 0
 //简单工厂
+//问题：不符合软件设计开闭原则
 class Car
-{//volatile关键字：告诉编译器不要对这个变量的读写操作进行优化，多线程环境中一个线程修改的变
+{
 public:
     Car(string name) : _name(name) {} 
     virtual void show() = 0;
@@ -79,13 +80,14 @@ int main()
 
     return 0;  
 }
-# endif
 
 //工厂方法：继承结构，一个工厂生产一个产品
+//问题：现在考虑一类产品（有关联关系的系列产品），工厂类太多太多
 class Factory
 {
 public:
-    virtual Car* createCar(string name) = 0;
+    virtual Car* createCar(string name) = 0; //工厂方法，负责车
+    virtual Light* createCarLight() = 0; //工厂方法，负责灯
 };
 //宝马工厂
 class BMWFactory : public Factory
@@ -105,3 +107,42 @@ public:
         return new Audi(name);
     }
 };
+#endif
+
+
+//系列产品2
+class Light
+{
+public:
+    virtual void show() = 0;
+};
+class BmwLight : public Light
+{
+public:
+    void show() {cout << "BMW light" << endl;}
+};
+class AudiLight : public Light
+{
+public:
+    void show() {cout << "Audi light" << endl;}
+};
+
+
+
+//抽象工厂（对有关联关系的产品组提供产品对象的统一创建）
+//问题：基类工厂添加一个方法：所有子类必须重写
+
+
+
+//简单工厂
+//把对象的创建封装在一个接口函数中通过传入不同的标示，返回创建的对象
+//客户不用自己负责new对象，不用了解对象创建的详细过程
+//提供创建对象方法的接口函数不闭合，不能对修改关闭
+
+//工厂方法
+//提供了一个纯虚函数（创建产品），定义派生类（具体产品的工厂）负责创建对应的产品
+//可以做到不同的产品在不同的工厂中创建，能够对现有工厂以及产品的修改关闭
+//实际上很多产品是有关联关系的，属于一个产品组，不应该放在不用的工厂中去创建，导致工厂类太多了，不好维护
+
+//抽象工厂
+//把有关联关系的属于一个产品组的所有产品创建的接口函数放在一个抽象工厂里面

@@ -47,7 +47,7 @@ Singleton Singleton::instance;
 //     Singleton t = *p1; //还是可以通过默认拷贝构造和赋值去创建对象，所以要限制拷贝构造和赋值
 //     return 0;
 // }
-#endif
+
 
 
 
@@ -84,3 +84,22 @@ private:
 };
 
 Singleton*volatile Singleton::instance = nullptr;
+
+#endif
+
+class Singleton
+{
+public:
+    //不是可重入函数(多线程中，一个函数没有执行完，能不能被另一个线程再调用一次，能则叫可重入)
+    static Singleton* getInstance()  // #3 获取类的唯一实例对象的接口方法，声明为static就不需要依赖具体的对象来获取
+    {
+        //函数静态局部变量的初始化，在汇编指令上已经自动添加线程互斥指令了
+        static Singleton instance; // #2 定义一个唯一的类的实例对象，静态对象第一次运行到这才进行初始化
+        return &instance;
+    }
+private:
+    //volatile关键字：告诉编译器不要对这个变量的读写操作进行优化，多线程环境中一个线程修改的变量可能被其他线程读取，不对改变两缓存，所有线程看到的都是cpu里的值
+    Singleton() {}  // #1 构造函数私有化，限制类对象的构造
+    Singleton(const Singleton&) = delete;  // #4 限制拷贝构造
+    Singleton& operator=(const Singleton&) = delete;
+};

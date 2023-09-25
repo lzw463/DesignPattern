@@ -87,6 +87,8 @@ Singleton*volatile Singleton::instance = nullptr;
 
 #endif
 
+
+//精简的线程安全的懒汉单例模式
 class Singleton
 {
 public:
@@ -98,7 +100,6 @@ public:
         return &instance;
     }
 private:
-    //volatile关键字：告诉编译器不要对这个变量的读写操作进行优化，多线程环境中一个线程修改的变量可能被其他线程读取，不对改变两缓存，所有线程看到的都是cpu里的值
     Singleton() {}  // #1 构造函数私有化，限制类对象的构造
     Singleton(const Singleton&) = delete;  // #4 限制拷贝构造
     Singleton& operator=(const Singleton&) = delete;
